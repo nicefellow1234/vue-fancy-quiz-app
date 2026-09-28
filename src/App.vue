@@ -1,62 +1,60 @@
 <template>
   <div id="app">
-    <b-container>
-      <b-card title="Card Title" no-body>
-        <Header
-          :numCorrect="numCorrect"
-          :numTotal="numTotal"
+    <main class="container">
+      <section class="card">
+        <QuizHeader
+          :num-correct="numCorrect"
+          :num-total="numTotal"
         />
         <QuestionBox
-          v-if="questions.length"
-          :currentQuestion="questions[index]"
+          v-if="questions[index]"
+          :current-question="questions[index]"
           :next="next"
           :increment="increment"
         />
-      </b-card>
-    </b-container>
+      </section>
+    </main>
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue'
+import QuizHeader from './components/Header.vue'
 import QuestionBox from './components/QuestionBox.vue'
 
 export default {
   name: 'App',
   components: {
-    Header,
-    QuestionBox
+    QuizHeader,
+    QuestionBox,
   },
   data() {
     return {
       questions: [],
       index: 0,
       numCorrect: 0,
-      numTotal: 0
+      numTotal: 0,
     }
+  },
+  mounted() {
+    fetch('https://opentdb.com/api.php?amount=10&category=18', {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((jsonData) => {
+        this.questions = jsonData.results
+      })
   },
   methods: {
     next() {
-      this.index++;
+      this.index++
     },
     increment(isCorrect) {
       if (isCorrect) {
         this.numCorrect++
       }
       this.numTotal++
-    }
+    },
   },
-  mounted: function() {
-    fetch('https://opentdb.com/api.php?amount=10&category=18', {
-      method: 'get'
-    })
-    .then((response) => {
-      return response.json()
-    })
-    .then((jsonData) => {
-      this.questions = jsonData.results
-    });
-  }
 }
 </script>
 
